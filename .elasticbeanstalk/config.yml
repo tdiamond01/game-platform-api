@@ -2,6 +2,8 @@ branch-defaults:
   main:
     environment: game-platform-api
     group_suffix: null
+  master:
+    environment: game-platform-api
 global:
   application_name: game-platform-api
   branch: null
