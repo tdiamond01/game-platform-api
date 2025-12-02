@@ -216,11 +216,28 @@ class SessionController extends Controller
         }
 
         // Complete the session and process rewards
-        $result = $this->progressTracker->completeSession(
-            $session,
-            $request->score,
-            $request->session_data
-        );
+        try {
+            $result = $this->progressTracker->completeSession(
+                $session,
+                $request->score,
+                $request->session_data
+            );
+        } catch (\Exception $e) {
+            \Log::error('Session completion failed: ' . $e->getMessage(), [
+                'session_id' => $sessionId,
+                'score' => $request->score,
+                'trace' => $e->getTraceAsString(),
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to complete session: ' . $e->getMessage(),
+                'debug' => config('app.debug') ? [
+                    'exception' => get_class($e),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ] : null,
+            ], 500);
+        }
 
         return response()->json([
             'success' => true,
