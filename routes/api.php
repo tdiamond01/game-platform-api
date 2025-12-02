@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\GameController;
 use App\Http\Controllers\Api\PlayerController;
@@ -92,6 +93,18 @@ Route::prefix('v1')->group(function () {
             'version' => config('gameplatform.version', '1.0.0'),
             'timestamp' => now()->toIso8601String(),
         ]);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::prefix('admin')->group(function () {
+        Route::get('players', [AdminController::class, 'listPlayers']);
+        Route::get('players/{id}', [AdminController::class, 'getPlayer']);
+        Route::post('players/{id}/resources', [AdminController::class, 'updatePlayerResources']);
     });
 
 });

@@ -10,6 +10,7 @@ return [
 
     'name' => env('PLATFORM_NAME', 'Diamond Games'),
     'version' => env('PLATFORM_VERSION', '1.0.0'),
+    'admin_token' => env('ADMIN_TOKEN'),
 
     /*
     |--------------------------------------------------------------------------
