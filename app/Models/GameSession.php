@@ -149,9 +149,12 @@ class GameSession extends Model
     public function complete(int $score, ?array $data = null): void
     {
         $now = now();
-        $duration = $this->started_at 
-            ? $now->diffInSeconds($this->started_at) 
-            : null;
+        $duration = null;
+
+        if ($this->started_at) {
+            // Use absolute value to handle any timezone issues
+            $duration = abs($now->diffInSeconds($this->started_at));
+        }
 
         $this->update([
             'status' => self::STATUS_COMPLETED,
