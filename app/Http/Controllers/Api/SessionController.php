@@ -307,8 +307,37 @@ class SessionController extends Controller
         $hintContent = null;
         if ($session->daily_challenge_id) {
             $challenge = $session->challenge;
-            $hintLevel = $session->hints_used + 1;
-            $hintContent = $challenge?->getHint($hintLevel);
+            $encodedLetter = strtoupper($request->input('encoded_letter', ''));
+
+            // If encoded_letter is provided, look up from solution cipher
+            if ($encodedLetter && $challenge) {
+                $solution = $challenge->solution;
+                $cipher = $solution['cipher'] ?? [];
+
+                // Cipher is stored as original => encoded, we need to reverse lookup
+                // Find the original letter that maps to this encoded letter
+                $originalLetter = null;
+                foreach ($cipher as $original => $encoded) {
+                    if (strtoupper($encoded) === $encodedLetter) {
+                        $originalLetter = $original;
+                        break;
+                    }
+                }
+
+                if ($originalLetter) {
+                    $hintContent = [
+                        'type' => 'letter',
+                        'encoded' => $encodedLetter,
+                        'original' => $originalLetter,
+                    ];
+                }
+            }
+
+            // Fallback to sequential hints if no encoded_letter or not found
+            if (!$hintContent) {
+                $hintLevel = $session->hints_used + 1;
+                $hintContent = $challenge?->getHint($hintLevel);
+            }
         }
 
         // Use the hint
