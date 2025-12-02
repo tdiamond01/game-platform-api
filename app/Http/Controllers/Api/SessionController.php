@@ -190,7 +190,7 @@ class SessionController extends Controller
 
         $validator = Validator::make($request->all(), [
             'score' => 'required|integer|min:0',
-            'solution' => 'nullable|mixed',
+            'solution' => 'nullable',
             'session_data' => 'nullable|array',
         ]);
 

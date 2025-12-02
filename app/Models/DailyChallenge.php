@@ -168,24 +168,30 @@ class DailyChallenge extends Model
 
     /**
      * Verify a solution attempt
+     *
+     * The attempt can be:
+     * - A string (the decoded quote)
+     * - An array with 'decoded' key containing the decoded quote
+     * - An array with 'quote' key containing the decoded quote
      */
     public function verifySolution(mixed $attempt): bool
     {
-        // Normalize and compare
-        $expected = $this->normalizeSolution($this->solution);
-        $submitted = $this->normalizeSolution($attempt);
-        
-        return $expected === $submitted;
-    }
+        // Get the expected quote from our solution
+        $expectedQuote = $this->solution['quote'] ?? '';
 
-    protected function normalizeSolution(mixed $solution): mixed
-    {
-        if (is_string($solution)) {
-            return strtolower(trim($solution));
+        // Extract the submitted quote from the attempt
+        $submittedQuote = '';
+        if (is_string($attempt)) {
+            $submittedQuote = $attempt;
+        } elseif (is_array($attempt)) {
+            // Support both 'decoded' (from Flutter app) and 'quote' formats
+            $submittedQuote = $attempt['decoded'] ?? $attempt['quote'] ?? '';
         }
-        if (is_array($solution)) {
-            return array_map(fn($v) => $this->normalizeSolution($v), $solution);
-        }
-        return $solution;
+
+        // Normalize both quotes: lowercase, remove extra whitespace
+        $expectedNormalized = strtolower(trim(preg_replace('/\s+/', ' ', $expectedQuote)));
+        $submittedNormalized = strtolower(trim(preg_replace('/\s+/', ' ', $submittedQuote)));
+
+        return $expectedNormalized === $submittedNormalized;
     }
 }
