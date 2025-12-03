@@ -45,10 +45,12 @@ return [
         'initial_hints' => env('INITIAL_HINTS', 3),
         'hints_per_completion' => env('HINTS_PER_COMPLETION', 0),
         'hints_per_milestone' => env('HINTS_PER_MILESTONE', 2),
+        'hints_per_ad' => env('HINTS_PER_AD', 1),
+        'max_hints_per_puzzle' => env('MAX_HINTS_PER_PUZZLE', 999),
         'hint_costs' => [
-            'reveal_letter' => 1,
-            'reveal_word' => 2,
-            'skip_puzzle' => 3,
+            'reveal_letter' => env('HINT_COST_REVEAL_LETTER', 1),
+            'reveal_word' => env('HINT_COST_REVEAL_WORD', 2),
+            'skip_puzzle' => env('HINT_COST_SKIP_PUZZLE', 3),
         ],
     ],
 

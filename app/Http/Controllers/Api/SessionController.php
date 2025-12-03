@@ -437,7 +437,11 @@ class SessionController extends Controller
         }
 
         $player = $request->user()->getOrCreatePlayer();
-        $amount = $request->amount ?? 1;
+
+        // Get amount from config based on reward type, or use provided amount
+        $amount = $request->amount ?? ($request->reward_type === 'hints'
+            ? config('gameplatform.rewards.hints_per_ad', 1)
+            : 1);
 
         $this->progressTracker->recordAdWatched(
             $player,
